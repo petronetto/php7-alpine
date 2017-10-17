@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-LABEL maintainer="juliano@petronetto.com.br"
+LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
 ENV PHP_VERSION=7.1.9-r0 \
     IGBINARY_VERSION=2.0.4 \
@@ -24,7 +24,7 @@ ENV PHP_MEMORY_LIMIT=256M \
     PHP_MAX_UPLOAD_FILESIZE=10M \
     PHP_MAX_FILE_UPLOADS=20 \
     PHP_MAX_INPUT_TIME=60 \
-    PHP_DATE_TIMEZONE=Europe/Minsk \
+    PHP_DATE_TIMEZONE=America/Sao_Paulo \
     PHP_VARIABLES_ORDER=EGPCS \
     PHP_REQUEST_ORDER=GP \
     PHP_SESSION_SERIALIZE_HANDLER=php_binary \
@@ -144,6 +144,9 @@ COPY ./config/php-fpm.conf /etc/php7/php-fpm.conf
 
 RUN addgroup -g 1000 -S www-data && \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data
+
+RUN ln -s /var/log/php7/access.log /proc/self/fd/2 \
+    && ln -s /var/log/php7/error.log /proc/self/fd/2
 
 WORKDIR /app
 
