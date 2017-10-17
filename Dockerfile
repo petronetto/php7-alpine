@@ -1,13 +1,16 @@
 FROM alpine:3.6
 
-LABEL maintainer="juliano@petronetto.com.br"
+LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
 ENV PHP_VERSION=7.1.9-r0 \
     IGBINARY_VERSION=2.0.4 \
     PHP_MEMCACHED_VERSION=3.0.3 \
     PHPREDIS_VERSION=3.1.4 \
     PHP_AMQP_VERSION=1.9.0 \
-    MONGO_PHP_DRIVER_VERSION=1.1.10
+    MONGO_PHP_DRIVER_VERSION=1.1.10 \
+    XDEBUG_ENABLE=0 \
+    XDEBUG_REMOTE_PORT=9000 \
+    XDEBUG_HOST=localhost
 
 ENV PHP_MEMORY_LIMIT=256M \
     PHP_PRECISION=-1 \
@@ -96,6 +99,7 @@ RUN apk add --update --no-cache \
     php7-fileinfo=${PHP_VERSION} \
     php7-tokenizer=${PHP_VERSION} \
     php7-fpm=${PHP_VERSION} \
+    php7-xdebug \
     php7=${PHP_VERSION}
 
 RUN rm -rf /etc/php7/php.ini && \
@@ -128,7 +132,6 @@ RUN apk add --update --no-cache --virtual .build-deps git file re2c autoconf mak
     cd .. && rm -rf /tmp/php-amqp/ && \
     echo 'extension=amqp.so' >> /etc/php7/conf.d/amqp.ini && \
     \
-    # Older drivers do not support LibreSSL https://github.com/mongodb/mongo-php-driver/issues/507
     git clone --depth=1 -b ${MONGO_PHP_DRIVER_VERSION} https://github.com/mongodb/mongo-php-driver.git /tmp/php-mongodb && \
     cd /tmp/php-mongodb && \
     git submodule update --init && \
@@ -141,6 +144,7 @@ RUN apk add --update --no-cache --virtual .build-deps git file re2c autoconf mak
 COPY ./config/php.ini /etc/php7/php.ini
 COPY ./config/www.conf /etc/php7/php-fpm.d/www.conf
 COPY ./config/php-fpm.conf /etc/php7/php-fpm.conf
+COPY ./config/xdebug.ini /etc/php7/conf.d/xdebug.ini
 
 RUN addgroup -g 1000 -S www-data && \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data
@@ -149,5 +153,4 @@ WORKDIR /app
 
 USER www-data
 
-# EXPOSE 9000
 CMD ["/usr/sbin/php-fpm7"]
