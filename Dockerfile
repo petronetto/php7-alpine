@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
+LABEL maintainer="juliano@petronetto.com.br"
 
 ENV PHP_VERSION=7.1.9-r0 \
     IGBINARY_VERSION=2.0.4 \
@@ -144,9 +144,6 @@ COPY ./config/php-fpm.conf /etc/php7/php-fpm.conf
 
 RUN addgroup -g 1000 -S www-data && \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data
-
-RUN ln -s /var/log/php7/access.log /proc/self/fd/2 \
-    && ln -s /var/log/php7/error.log /proc/self/fd/2
 
 WORKDIR /app
 
