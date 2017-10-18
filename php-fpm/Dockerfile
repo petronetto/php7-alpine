@@ -1,6 +1,13 @@
 FROM alpine:3.6
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
+LABEL org.label-schema.name="PHP7 Alpine" \
+      org.label-schema.description="PHP7 with almost all extensions that you may need, in only 22 MB" \
+      org.label-schema.url="https://hub.docker.com/r/petronetto/php7-alpine/" \
+      org.label-schema.vcs-url="https://github.com/petronetto/php7-alpine" \
+      org.label-schema.vendor="Petroneto DevTech" \
+      org.label-schema.version="1.0" \
+      org.label-schema.schema-version="1.0"
 
 ENV PHP_VERSION=7.1.9-r0 \
     IGBINARY_VERSION=2.0.4 \

@@ -6,25 +6,12 @@ services:
   php-fpm:
     container_name: php-fpm
     network_mode: bridge
-    build: php-fpm
+    image: php7-alpine
     environment:
       XDEBUG_HOST: ${MY_IP} # .env
       XDEBUG_REMOTE_PORT: 9000
     volumes:
       - ./example:/app
-######################################
-# Caddy Container
-######################################
-  caddy:
-    container_name: caddy
-    network_mode: bridge
-    build: ./caddy
-    links:
-      - php-fpm
-    volumes:
-      - ./example:/app
-    ports:
-      - 8080:8080
 ######################################
 # NGINX Container
 ######################################
@@ -37,4 +24,17 @@ services:
     volumes:
       - ./example:/app
     ports:
-      - 9000:8080
+      - 8080:8080
+######################################
+# Caddy Container
+######################################
+  caddy:
+    container_name: caddy
+    network_mode: bridge
+    build: ./caddy
+    links:
+      - php-fpm
+    volumes:
+      - ./example:/app
+    ports:
+      - 8000:8080
