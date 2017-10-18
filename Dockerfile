@@ -149,6 +149,8 @@ COPY ./config/xdebug.ini /etc/php7/conf.d/xdebug.ini
 RUN addgroup -g 1000 -S www-data && \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+
 WORKDIR /app
 
 USER www-data
