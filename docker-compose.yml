@@ -6,7 +6,7 @@ services:
   php-fpm:
     container_name: php-fpm
     network_mode: bridge
-    image: php7-alpine
+    image: petronetto/php7-alpine
     environment:
       XDEBUG_HOST: ${MY_IP} # .env
       XDEBUG_REMOTE_PORT: 9000
