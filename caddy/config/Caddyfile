@@ -1,0 +1,11 @@
+*:8080 {
+    root /app/public
+    tls off
+    gzip
+    log stdout
+    errors stderr
+    fastcgi / {%PHP_SERVER%}:9000 php
+    rewrite {
+        to {path} {path}/ /index.php?{query}
+    }
+}
