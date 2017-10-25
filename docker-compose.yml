@@ -8,6 +8,7 @@ services:
     network_mode: bridge
     image: petronetto/php7-alpine
     environment:
+      XDEBUG_ENABLE: 1
       XDEBUG_HOST: ${MY_IP} # .env
       XDEBUG_REMOTE_PORT: 9000
     volumes:
