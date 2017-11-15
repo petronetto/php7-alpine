@@ -10,8 +10,8 @@ services:
       XDEBUG_ENABLE: 1
       XDEBUG_HOST: ${MY_IP} # .env
       XDEBUG_REMOTE_PORT: 9000
-      NEWRELIC_ENABLED: 1
-      NEWRELIC_LICENSE: "01be7a2ce288ca021303ce2e7aad11d5f8294105"
+      NEWRELIC_ENABLED: 0
+      NEWRELIC_LICENSE: ""
     volumes:
       - ./example:/app
 ######################################
