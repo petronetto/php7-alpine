@@ -19,6 +19,15 @@ ENV PHP_VERSION=7.1.9-r0 \
     XDEBUG_REMOTE_PORT=9000 \
     XDEBUG_HOST=localhost
 
+ENV NEWRELIC_VERSION=7.6.0.201 \
+    NEWRELIC_ENABLED=0 \
+    NEWRELIC_APP_NAME="PHP Application" \
+    NEWRELIC_LICENSE="" \
+    NEWRELIC_LOG_FILE="/dev/stdout" \
+    NEWRELIC_LOG_LEVEL="info" \
+    NEWRELIC_DAEMON_LOG_FILE="/dev/stdout" \
+    NEWRELIC_DAEMON_LOG_LEVEL="info"
+
 ENV PHP_MEMORY_LIMIT=256M \
     PHP_PRECISION=-1 \
     PHP_OUTPUT_BUFFERING=4096 \
@@ -114,6 +123,12 @@ RUN rm -rf /etc/php7/php.ini && \
 
 RUN apk add --update --no-cache libmemcached rabbitmq-c
 
+RUN	mkdir /opt && \
+	cd /opt && \
+	curl -LOk http://download.newrelic.com/php_agent/release/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz && \
+	gzip -dc newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz | tar xf - && \
+	./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install
+
 RUN apk add --update --no-cache --virtual .build-deps git file re2c autoconf make g++ php7-dev=${PHP_VERSION} libmemcached-dev cyrus-sasl-dev zlib-dev musl rabbitmq-c-dev pcre-dev && \
     git clone --depth=1 -b ${IGBINARY_VERSION} https://github.com/igbinary/igbinary.git /tmp/php-igbinary && \
     cd /tmp/php-igbinary && \
@@ -152,6 +167,7 @@ COPY ./config/php.ini /etc/php7/php.ini
 COPY ./config/www.conf /etc/php7/php-fpm.d/www.conf
 COPY ./config/php-fpm.conf /etc/php7/php-fpm.conf
 COPY ./config/xdebug.ini /etc/php7/conf.d/xdebug.ini
+COPY ./config/newrelic.ini /etc/php7/conf.d/newrelic.ini
 
 RUN addgroup -g 1000 -S www-data && \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data

@@ -1,5 +1,5 @@
 # PHP7 Alpine
-PHP7 with almost all extensions that you may need, in only 22 MB.
+PHP7 with almost all extensions that you may need.
 
 [![](https://images.microbadger.com/badges/image/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php7-alpine:latest "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php-nginx-alpine:stable "Get your own version badge on microbadger.com")
@@ -9,6 +9,9 @@ PHP7 with almost all extensions that you may need, in only 22 MB.
 Run `docker-composer -up` and access `http://localhost:8080` (NGINX) or `http://localhost:8000` (Caddy).
 
 > NOTE: The container will run with user `www-data`, that is a non-root user, if you need access the container as root run `docker exec -u 0 -it php-fpm sh`.
+
+# New Relic
+To enable *New Relic* Agent, you must pass set the env `NEWRELIC_ENABLED` and `NEWRELIC_LICENSE`. Other params is also available, check the [Dockerfile](https://github.com/petronetto/php7-alpine/blob/master/php-fpm/Dockerfile) for more details.  
 
 
 # Remote debug

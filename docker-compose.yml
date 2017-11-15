@@ -5,12 +5,13 @@ services:
 ######################################
   php-fpm:
     container_name: php-fpm
-    network_mode: bridge
     image: petronetto/php7-alpine
     environment:
       XDEBUG_ENABLE: 1
       XDEBUG_HOST: ${MY_IP} # .env
       XDEBUG_REMOTE_PORT: 9000
+      NEWRELIC_ENABLED: 1
+      NEWRELIC_LICENSE: "01be7a2ce288ca021303ce2e7aad11d5f8294105"
     volumes:
       - ./example:/app
 ######################################
@@ -18,7 +19,6 @@ services:
 ######################################
   nginx:
     container_name: nginx
-    network_mode: bridge
     build: ./nginx
     links:
       - php-fpm
@@ -31,7 +31,6 @@ services:
 ######################################
   caddy:
     container_name: caddy
-    network_mode: bridge
     build: ./caddy
     links:
       - php-fpm
