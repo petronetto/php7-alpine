@@ -44,8 +44,9 @@ Put this config in your `launch.json`:
             "type": "php",
             "request": "launch",
             "port": 9000,
-            "serverSourceRoot": "/app",
-            "localSourceRoot": "${workspaceRoot}/src", // replace by your local source
+            "pathMappings": {
+                "/app": "${workspaceRoot}"
+            },
             "ignore": ["**/vendor/**/*.php"]
         }
     ]
