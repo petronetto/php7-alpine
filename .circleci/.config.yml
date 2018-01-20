@@ -1,0 +1,62 @@
+version: 2
+jobs:
+  login:
+    machine: true
+    steps:
+      - run:
+          name: Docker Login
+          command: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+  build:
+    machine: true
+    steps:
+      - run:
+          name: Docker Build
+          command: |
+            docker build -t petronetto/php7-alpine .
+  push-dev:
+    machine: true
+    steps:
+      - run:
+          name: Push the develop tag
+          command: |
+            docker tag petronetto/php7-alpine petronetto/php7-alpine:develop
+            docker push petronetto/php7-alpine:develop
+  push-prd:
+    machine: true
+    steps:
+      - run:
+          name: Latest tag
+          command: |
+            docker push petronetto/php7-alpine:latest
+  backup:
+    machine: true
+    steps:
+      - run:
+          name: Backup tag
+          command: |
+            docker tag petronetto/php7-alpine petronetto/php7-alpine:v-$CIRCLE_BUILD_NUM
+            docker push petronetto/php7-alpine:v-$CIRCLE_BUILD_NUM
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - login
+      - build:
+          requires:
+            - login
+      - push-dev:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - push-dev:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - backup:
+          requires:
+            - build
