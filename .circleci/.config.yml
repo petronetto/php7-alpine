@@ -1,15 +1,12 @@
 version: 2
 jobs:
-  login:
+  build:
     machine: true
     steps:
       - checkout
       - run:
           name: Docker Login
           command: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
-  build:
-    machine: true
-    steps:
       - run:
           name: Docker Build
           command: docker build -t petronetto/php7-alpine .
@@ -40,10 +37,7 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - login
       - build:
-          requires:
-            - login
       - push-dev:
           requires:
             - build
