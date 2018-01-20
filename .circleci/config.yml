@@ -2,7 +2,6 @@ version: 2
 jobs:
   build:
     machine: true
-    working_directory: ./php-fpm
     steps:
       - checkout
       - run:
@@ -11,7 +10,7 @@ jobs:
       - run:
           name: Docker Build
           command: |
-            docker build -t petronetto/php7-alpine .
+            docker build -t petronetto/php7-alpine php-fpm
       - run:
           name: Docker Images
           command: |
