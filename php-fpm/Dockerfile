@@ -1,13 +1,13 @@
 FROM alpine:3.6
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
-LABEL org.label-schema.name="PHP7 Alpine" \
-      org.label-schema.description="PHP7 with almost all extensions that you may need" \
-      org.label-schema.url="https://hub.docker.com/r/petronetto/php7-alpine/" \
-      org.label-schema.vcs-url="https://github.com/petronetto/php7-alpine" \
-      org.label-schema.vendor="Petronetto DevTech" \
-      org.label-schema.version="1.2" \
-      org.label-schema.schema-version="1.0"
+LABEL name="PHP7 Alpine" \
+      description="PHP7 with almost all extensions that you may need" \
+      url="https://hub.docker.com/r/petronetto/php7-alpine/" \
+      vcs-url="https://github.com/petronetto/php7-alpine" \
+      vendor="Petronetto DevTech" \
+      version="1.2" \
+      schema-version="1.0"
 
 ENV PHP_VERSION=7.1.9-r0 \
     IGBINARY_VERSION=2.0.4 \
@@ -19,7 +19,7 @@ ENV PHP_VERSION=7.1.9-r0 \
     XDEBUG_REMOTE_PORT=9000 \
     XDEBUG_HOST=localhost
 
-ENV NEWRELIC_VERSION=7.6.0.201 \
+ENV NEWRELIC_VERSION=7.7.0.203 \
     NEWRELIC_ENABLED=0 \
     NEWRELIC_APP_NAME="PHP Application" \
     NEWRELIC_LICENSE="" \
@@ -73,10 +73,11 @@ ENV PHP_MEMORY_LIMIT=256M \
 RUN apk upgrade --update --no-cache && \
     apk add --update --no-cache \
     ca-certificates \
+    tar \
     curl \
-    bash
-
-RUN apk add --update --no-cache \
+    bash \
+    && \
+    apk add --update --no-cache \
     php7-session=${PHP_VERSION} \
     php7-mcrypt=${PHP_VERSION} \
     php7-soap=${PHP_VERSION} \
@@ -116,20 +117,20 @@ RUN apk add --update --no-cache \
     php7-tokenizer=${PHP_VERSION} \
     php7-fpm=${PHP_VERSION} \
     php7-xdebug \
-    php7=${PHP_VERSION}
-
-RUN rm -rf /etc/php7/php.ini && \
-    mkdir /app
-
-RUN apk add --update --no-cache libmemcached rabbitmq-c
-
-RUN mkdir /opt && \
+    php7=${PHP_VERSION} \
+    && \
+    rm -rf /etc/php7/php.ini && \
+    mkdir /app \
+    && \
+    apk add --update --no-cache libmemcached rabbitmq-c \
+    && \
+    mkdir /opt && \
     cd /opt && \
     curl -LOk http://download.newrelic.com/php_agent/release/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz && \
     gzip -dc newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz | tar xf - && \
-    ./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install
-
-RUN apk add --update --no-cache --virtual .build-deps git file re2c autoconf make g++ php7-dev=${PHP_VERSION} libmemcached-dev cyrus-sasl-dev zlib-dev musl rabbitmq-c-dev pcre-dev && \
+    ./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install \
+    && \
+    apk add --update --no-cache --virtual .build-deps git file re2c autoconf make g++ php7-dev=${PHP_VERSION} libmemcached-dev cyrus-sasl-dev zlib-dev musl rabbitmq-c-dev pcre-dev && \
     git clone --depth=1 -b ${IGBINARY_VERSION} https://github.com/igbinary/igbinary.git /tmp/php-igbinary && \
     cd /tmp/php-igbinary && \
     phpize && ./configure CFLAGS="-O2 -g" --enable-igbinary && make && make install && \
