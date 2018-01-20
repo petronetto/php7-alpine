@@ -9,18 +9,18 @@ jobs:
           command: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
       - run:
           name: Docker Build
-          command: docker build -t petronetto/php7-alpine .
+          command: docker build -t petronetto/php7-alpine php-fpm
       - run:
           name: Push the develop tag
           command: |
-            if [ "$ {CIRCLE_BRANCH}" == "develop" ]; then
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
               docker tag petronetto/php7-alpine petronetto/php7-alpine:develop
               docker push petronetto/php7-alpine:develop
             fi
       - run:
-          name: Push the develop tag
+          name: Push the latest tag
           command: |
-            if [ "$ {CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
               docker tag petronetto/php7-alpine petronetto/php7-alpine:latest
               docker push petronetto/php7-alpine:latest
             fi
