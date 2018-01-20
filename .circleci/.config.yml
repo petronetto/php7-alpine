@@ -9,7 +9,12 @@ jobs:
           command: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
       - run:
           name: Docker Build
-          command: docker build -t petronetto/php7-alpine php-fpm
+          command: |
+            docker build -t petronetto/php7-alpine php-fpm
+      - run:
+          name: Docker Images
+          command: |
+            docker images
       - run:
           name: Push the develop tag
           command: |
