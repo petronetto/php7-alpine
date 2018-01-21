@@ -4,11 +4,19 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+      - run:
+          name: Docker Login
+          command: docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
   build:
+    machine: true
     steps:
-      - run: docker build -t petronetto/php7-alpine ./php-fpm
+      - checkout
+      - run:
+          name: Docker Build
+          command: |
+            docker build -t petronetto/php7-alpine ./php-fpm
   push-dev:
+    machine: true
     steps:
       - run:
           name: Push the develop tag
@@ -16,8 +24,12 @@ jobs:
             docker tag petronetto/php7-alpine petronetto/php7-alpine:develop
             docker push petronetto/php7-alpine:develop
   push-prd:
+    machine: true
     steps:
-      - run: docker push petronetto/php7-alpine:latest
+      - run:
+          name: Latest tag
+          command: |
+            docker push petronetto/php7-alpine:latest
   backup:
     machine: true
     steps:
