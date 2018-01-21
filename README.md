@@ -3,6 +3,7 @@ PHP7 with almost all extensions that you may need.
 
 [![](https://images.microbadger.com/badges/image/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php7-alpine:latest "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php-nginx-alpine:stable "Get your own version badge on microbadger.com")
+[![CircleCI](https://circleci.com/gh/petronetto/php7-alpine/tree/master.svg?style=svg)](https://circleci.com/gh/petronetto/php7-alpine/tree/master)
 
 
 # Running
