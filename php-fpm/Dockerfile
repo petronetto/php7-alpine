@@ -1,7 +1,7 @@
-FROM alpine:3.6
+FROM alpine:3.7
 
-LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
-LABEL name="PHP7 Alpine" \
+LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>" \
+      name="PHP7 Alpine" \
       description="PHP7 with almost all extensions that you may need" \
       url="https://hub.docker.com/r/petronetto/php7-alpine/" \
       vcs-url="https://github.com/petronetto/php7-alpine" \
@@ -162,7 +162,7 @@ RUN apk upgrade --update --no-cache && \
     cd .. && rm -rf /tmp/php-mongodb/ && \
     echo 'extension=mongodb.so' >> /etc/php7/conf.d/mongodb.ini && \
     \
-    apk del .build-deps
+    rm -rf /var/cache/apk/* && apk del .build-deps
 
 COPY ./config/php.ini /etc/php7/php.ini
 COPY ./config/www.conf /etc/php7/php-fpm.d/www.conf
