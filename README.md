@@ -1,5 +1,5 @@
 # PHP7 Alpine
-PHP7 with almost all extensions that you may need.
+PHP7 with almost everything that you may need.
 
 [![](https://images.microbadger.com/badges/image/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php7-alpine:latest "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php-nginx-alpine:stable "Get your own version badge on microbadger.com")
@@ -33,7 +33,7 @@ Install [PHP Debug Extension](https://marketplace.visualstudio.com/items?itemNam
 
 Put this config in your `launch.json`:
 
->**NOTE** this example will map the folder `src` in your local machine to `/var/www/html` onde debug container. Remeber that container is configured to boostrap in `/var/www/html/public`, as the example provided in this repo.
+>**NOTE** this example will map the local folder app, to `/app` on the container. Remenber that container is configured to boostrap in `/app/public`, as the example provided in this repo
 
 ```json
 //launch.json
