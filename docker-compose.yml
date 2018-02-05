@@ -12,6 +12,11 @@ services:
       XDEBUG_REMOTE_PORT: 9000
       NEWRELIC_ENABLED: 0
       NEWRELIC_LICENSE: ""
+      POSTGRES_DB: homestead
+      POSTGRES_USER: homestead
+      POSTGRES_PASSWORD: secret
+    links:
+      - database
     volumes:
       - ./example:/app
 ######################################
@@ -38,3 +43,18 @@ services:
       - ./example:/app
     ports:
       - 8000:8080
+######################################
+# Database Container
+######################################
+  database:
+    container_name: database
+    restart: always
+    image: postgres:alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: homestead
+      POSTGRES_USER: homestead
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - ./database:/var/lib/postgresql
