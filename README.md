@@ -5,6 +5,8 @@ PHP7 with almost everything that you may need.
 [![](https://images.microbadger.com/badges/version/petronetto/php7-alpine:latest.svg)](https://microbadger.com/images/petronetto/php-nginx-alpine:stable "Get your own version badge on microbadger.com")
 [![CircleCI](https://circleci.com/gh/petronetto/php7-alpine/tree/master.svg?style=svg)](https://circleci.com/gh/petronetto/php7-alpine/tree/master)
 
+<a href='https://ko-fi.com/N4N09BMZ' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 
 # Running
 Run `docker-composer -up` and access `http://localhost:8080` (NGINX) or `http://localhost:8000` (Caddy).
