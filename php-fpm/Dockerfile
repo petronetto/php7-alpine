@@ -9,7 +9,7 @@ LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>" \
       version="1.2" \
       schema-version="1.0"
 
-ENV PHP_VERSION=7.1.12-r0 \
+ENV PHP_VERSION=7.1.14-r0 \
     IGBINARY_VERSION=2.0.4 \
     PHP_MEMCACHED_VERSION=3.0.3 \
     PHPREDIS_VERSION=3.1.4 \
