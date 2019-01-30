@@ -28,7 +28,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-FROM alpine:3.7
+FROM alpine:3.8
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
@@ -40,8 +40,15 @@ ENV BUILD_DEPS="autoconf g++ make php7-dev git php7-pear tzdata libmemcached-dev
     XDEBUG_REMOTE_PORT=9000 \
     XDEBUG_HOST=localhost \
     XDEBUG_LOG=/var/log/xdebug/xdebug.log \
+    PHP_MEMCACHE_BRANCH=NON_BLOCKING_IO_php7 \
+    PHP_MEMCACHED_VERSION=3.0.4-r1 \
+    PHP_REDIS_VERSION=3.1.6 \
+    PHP_MONGODB_VERSION=1.4.4-r0 \
+    PHP_IGBINARY_VERSION=2.0.8 \
+    PHP_OAUTH_VERSION=2.0.3 \
+    PHP_SYSCONF_PATH=/etc/php7 \
 # New Relic
-    NEWRELIC_VERSION=8.1.0.209 \
+    NEWRELIC_VERSION=8.5.0.235 \
     NEWRELIC_ENABLED=0 \
     NEWRELIC_APP_NAME="PHP Application" \
     NEWRELIC_LICENSE= \
@@ -129,23 +136,37 @@ RUN set -ex; \
     cp /usr/share/zoneinfo/Etc/UTC /etc/localtime; \
     echo "UTC" | tee /etc/timezone; \
 # install PHP driver
-    pecl install -f mongodb; \
-    echo 'extension=mongodb.so' > /etc/php7/conf.d/mongodb.ini; \
-    pecl install -f igbinary; \
-    echo 'extension=igbinary.so' > /etc/php7/conf.d/igbinary.ini; \
-    pecl install -f redis; \
-    echo 'extension=redis.so' > /etc/php7/conf.d/redis.ini; \
-    git clone https://github.com/php-memcached-dev/php-memcached.git /tmp/php-memcached; \
-    cd /tmp/php-memcached; \
-    phpize; ./configure --with-libmemcached-dir=/usr \
-    --with-zlib-dir=/usr --disable-memcached-sasl; make; make install; \
-    cd .. && rm -rf /tmp/php-memcached/; \
-    echo 'extension=memcached.so' >> /etc/php7/conf.d/memcached.ini; \
-    git clone https://github.com/pdezwart/php-amqp.git /tmp/php-amqp;\
-    cd /tmp/php-amqp; \
-    phpize; ./configure; make; make install; \
-    cd .. && rm -rf /tmp/php-amqp/; \
-    echo 'extension=amqp.so' >> /etc/php7/conf.d/amqp.ini; \
+    git clone https://github.com/mongodb/mongo-php-driver.git /tmp/php-mongodb && \
+    cd /tmp/php-mongodb && \
+    git submodule update --init && \
+    phpize && ./configure --with-php-config=/usr/bin/php-config7 && make all && make install && \
+    cd .. && rm -rf /tmp/php-mongodb/ && \
+    echo 'extension=mongodb.so' >> ${PHP_SYSCONF_PATH}/conf.d/mongodb.ini \
+    ; \
+    git clone --depth=1 -b ${PHP_MEMCACHE_BRANCH} https://github.com/websupport-sk/pecl-memcache.git /tmp/php-memcache && \
+    cd /tmp/php-memcache && \
+    phpize && ./configure --with-php-config=/usr/bin/php-config7 && make && make install && \
+    cd .. && rm -rf /tmp/php-memcache/ && \
+    echo 'extension=memcache.so' >> ${PHP_SYSCONF_PATH}/conf.d/memcache.ini \
+    ; \
+    git clone --depth=1 -b ${PHP_IGBINARY_VERSION} https://github.com/igbinary/igbinary.git /tmp/php-igbinary && \
+    cd /tmp/php-igbinary && \
+    phpize && ./configure CFLAGS="-O2 -g" --enable-igbinary --with-php-config=/usr/bin/php-config7 && make && make install && \
+    cd .. && rm -rf /tmp/php-igbinary/ && \
+    echo 'extension=igbinary.so' >> ${PHP_SYSCONF_PATH}/conf.d/igbinary.ini \
+    ; \
+    cd /tmp && wget https://pecl.php.net/get/oauth-${PHP_OAUTH_VERSION}.tgz && tar xvzf oauth-${PHP_OAUTH_VERSION}.tgz && \
+    cd oauth-${PHP_OAUTH_VERSION} && \
+    phpize && ./configure --with-php-config=/usr/bin/php-config7 && make && make install && \
+    cd .. && rm -rf /tmp/${PHP_OAUTH_VERSION}/ && \
+    echo 'extension=oauth.so' >> ${PHP_SYSCONF_PATH}/conf.d/oauth.ini \
+    ; \
+    git clone --depth=1 -b ${PHP_REDIS_VERSION} https://github.com/phpredis/phpredis.git /tmp/phpredis && \
+    cd /tmp/phpredis && phpize &&  ./configure &&  make && make install && \
+    cd .. && rm -rf /tmp/phpredis && \
+    echo 'extension=redis.so' >> ${PHP_SYSCONF_PATH}/conf.d/redis.ini \
+    ; \
+    rm -rf /tmp/pear; \
 # Create application folder
     mkdir -p /app; \
 # Creating www-data user and group
@@ -153,7 +174,7 @@ RUN set -ex; \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data; \
 # Installing New Relic Agent
     mkdir /opt && cd /opt; \
-    curl -LOk http://download.newrelic.com/php_agent/release/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz; \
+    curl -LOk http://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz; \
     gzip -dc newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz | tar xf -;\
     ./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install;\
 # Installing Composer
