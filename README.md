@@ -100,7 +100,7 @@ Intall [this extension](https://github.com/gwomacks/php-debug), go to `Settings 
 ```
 
 
-## PHPStorn
+## PHPStorm
 Configuration is in two parts:
 
 Configuring a Server: `Preferences > Languages & Frameworks > PHP > Servers`
