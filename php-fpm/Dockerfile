@@ -113,6 +113,9 @@ RUN set -ex; \
         php7-dom \
         php7-fpm \
         php7-cgi \
+        php7-gd \
+        php7-intl \
+        php7-iconv \
         php7-mbstring \
         php7-mcrypt \
         php7-opcache \
