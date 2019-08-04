@@ -32,7 +32,7 @@ FROM alpine:3.8
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
-ENV BUILD_DEPS="autoconf g++ make php7-dev git php7-pear tzdata libmemcached-dev rabbitmq-c-dev zlib-dev" \
+ENV BUILD_DEPS="autoconf g++ make php7-dev php7-pear tzdata libmemcached-dev rabbitmq-c-dev zlib-dev" \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
 # XDebug configs
@@ -102,6 +102,7 @@ RUN set -ex; \
     apk --update upgrade --no-cache; \
     apk add --no-cache --virtual .build-deps ${BUILD_DEPS}; \
     apk add --no-cache \
+        git \ 
         curl \
         zlib \
         ca-certificates \
@@ -112,6 +113,9 @@ RUN set -ex; \
         php7-dom \
         php7-fpm \
         php7-cgi \
+        php7-gd \
+        php7-intl \
+        php7-iconv \
         php7-mbstring \
         php7-mcrypt \
         php7-opcache \
