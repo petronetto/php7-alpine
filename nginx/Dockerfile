@@ -5,8 +5,8 @@ LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 # Install packages
 RUN apk --update add --no-cache tzdata \
     && rm -rf /var/cache/apk/* \
-    && cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
-    && echo "America/Sao_Paulo" > /etc/timezone \
+    && cp /usr/share/zoneinfo/Etc/UTC /etc/localtime \
+    && echo "UTC" > /etc/timezone \
     && apk del tzdata && rm -rf /var/cache/apk/* \
     && mkdir /app \
     && chown -R nginx:nginx /app \

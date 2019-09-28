@@ -3,8 +3,8 @@ services:
 ######################################
 # PHP-FPM Container
 ######################################
-  php-fpm:
-    container_name: php-fpm
+  phpserver:
+    container_name: phpserver
     image: petronetto/php7-alpine
     environment:
       XDEBUG_ENABLE: 1
@@ -19,6 +19,9 @@ services:
       - database
     volumes:
       - ./example:/app
+    command: php /app/public/swoole.php
+    ports:
+      - 8888:8888
 ######################################
 # NGINX Container
 ######################################
@@ -26,23 +29,11 @@ services:
     container_name: nginx
     build: ./nginx
     links:
-      - php-fpm
+      - phpserver
     volumes:
       - ./example:/app
     ports:
       - 8080:8080
-######################################
-# Caddy Container
-######################################
-  caddy:
-    container_name: caddy
-    build: ./caddy
-    links:
-      - php-fpm
-    volumes:
-      - ./example:/app
-    ports:
-      - 8000:8080
 ######################################
 # Database Container
 ######################################
