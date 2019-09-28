@@ -112,28 +112,30 @@ RUN set -ex; \
         libmemcached \
         rabbitmq-c \
         php7 \
-        php7-dom \
-        php7-fpm \
         php7-cgi \
+        php7-ctype \
+        php7-curl \
+        php7-dom \
+        php7-fileinfo \
+        php7-fpm \
+        php7-json \
         php7-mbstring \
         php7-mcrypt \
         php7-opcache \
+        php7-openssl \
         php7-pdo \
+        php7-pdo_mysql \
         php7-pdo_pgsql \
         php7-pdo_sqlite \
-        php7-fileinfo \
-        php7-xml \
+        php7-pecl-event \
+        php7-phar \
+        php7-session \
         php7-simplexml \
+        php7-tokenizer \
+        php7-xml \
         php7-xmlreader \
         php7-xmlwriter \
-        php7-phar \
-        php7-openssl \
-        php7-json \
-        php7-curl \
-        php7-ctype \
-        php7-session \
-        php7-zlib \
-        php7-tokenizer; \
+        php7-zlib; \
 # Configuring timezones
      cp /usr/share/zoneinfo/Etc/UTC /etc/localtime; \
      echo "UTC" | tee /etc/timezone; \
