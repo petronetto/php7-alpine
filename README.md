@@ -11,7 +11,7 @@ PHP7 with almost everything that you may need.
 
 
 # Running
-Run `docker-composer -up` and access `http://localhost:8080` (NGINX) or `http://localhost:8000` (Caddy).
+Run `docker-composer -up` and access `http://localhost:8080`.
 
 > NOTE: The container will run with user `www-data`, that is a non-root user, if you need access the container as root run `docker exec -u 0 -it php-fpm sh`.
 
