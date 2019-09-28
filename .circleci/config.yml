@@ -11,7 +11,7 @@ jobs:
           name: Build for develop
           command: |
             if [ "${CIRCLE_BRANCH}" == "develop" ]; then
-              docker build --build-arg EXTRAS=composer,redis,mongo,ibgnary,redis -t petronetto/php7-alpine ./php-fpm
+              docker build --build-arg EXTRAS=composer,redis,mongo,ibgnary -t petronetto/php7-alpine ./php-fpm
               docker tag petronetto/php7-alpine petronetto/php7-alpine:develop
               docker push petronetto/php7-alpine:develop
             fi
@@ -19,7 +19,7 @@ jobs:
           name: Build for prod
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker build --build-arg EXTRAS=redis,mongo,ibgnary,newrelic,redis -t petronetto/php7-alpine ./php-fpm
+              docker build --build-arg EXTRAS=redis,mongo,ibgnary,newrelic -t petronetto/php7-alpine ./php-fpm
               docker tag petronetto/php7-alpine petronetto/php7-alpine:latest
               docker push petronetto/php7-alpine:latest
             fi
