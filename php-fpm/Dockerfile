@@ -32,6 +32,8 @@ FROM alpine:3.10
 
 LABEL maintainer="Juliano Petronetto <juliano@petronetto.com.br>"
 
+ARG EXTRAS=""
+
 ENV BUILD_DEPS="autoconf g++ make php7-dev git php7-pear tzdata libmemcached-dev rabbitmq-c-dev zlib-dev" \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
@@ -51,7 +53,7 @@ ENV BUILD_DEPS="autoconf g++ make php7-dev git php7-pear tzdata libmemcached-dev
     NEWRELIC_VERSION=8.5.0.235 \
     NEWRELIC_ENABLED=0 \
     NEWRELIC_APP_NAME="PHP Application" \
-    NEWRELIC_LICENSE= \
+    NEWRELIC_LICENSE="" \
     NEWRELIC_LOG_FILE=/var/log/newrelic/newrelic.log \
     NEWRELIC_LOG_LEVEL=info \
     NEWRELIC_DAEMON_LOG_FILE=/var/log/newrelic/daemon.log \
@@ -102,6 +104,7 @@ RUN set -ex; \
     apk --update upgrade --no-cache; \
     apk add --no-cache --virtual .build-deps ${BUILD_DEPS}; \
     apk add --no-cache \
+        bash \
         curl \
         zlib \
         ca-certificates \
@@ -130,61 +133,22 @@ RUN set -ex; \
         php7-ctype \
         php7-session \
         php7-zlib \
-        php7-tokenizer \
-        php7-xdebug; \
+        php7-tokenizer; \
 # Configuring timezones
-    cp /usr/share/zoneinfo/Etc/UTC /etc/localtime; \
-    echo "UTC" | tee /etc/timezone; \
-# install PHP driver
-    git clone https://github.com/mongodb/mongo-php-driver.git /tmp/php-mongodb && \
-    cd /tmp/php-mongodb && \
-    git submodule update --init && \
-    phpize && ./configure --with-php-config=/usr/bin/php-config7 && make all && make install && \
-    cd .. && rm -rf /tmp/php-mongodb/ && \
-    echo 'extension=mongodb.so' >> ${PHP_SYSCONF_PATH}/conf.d/mongodb.ini \
-    ; \
-    git clone --depth=1 -b ${PHP_MEMCACHE_BRANCH} https://github.com/websupport-sk/pecl-memcache.git /tmp/php-memcache && \
-    cd /tmp/php-memcache && \
-    phpize && ./configure --with-php-config=/usr/bin/php-config7 && make && make install && \
-    cd .. && rm -rf /tmp/php-memcache/ && \
-    echo 'extension=memcache.so' >> ${PHP_SYSCONF_PATH}/conf.d/memcache.ini \
-    ; \
-    git clone --depth=1 -b ${PHP_IGBINARY_VERSION} https://github.com/igbinary/igbinary.git /tmp/php-igbinary && \
-    cd /tmp/php-igbinary && \
-    phpize && ./configure CFLAGS="-O2 -g" --enable-igbinary --with-php-config=/usr/bin/php-config7 && make && make install && \
-    cd .. && rm -rf /tmp/php-igbinary/ && \
-    echo 'extension=igbinary.so' >> ${PHP_SYSCONF_PATH}/conf.d/igbinary.ini \
-    ; \
-    cd /tmp && wget https://pecl.php.net/get/oauth-${PHP_OAUTH_VERSION}.tgz && tar xvzf oauth-${PHP_OAUTH_VERSION}.tgz && \
-    cd oauth-${PHP_OAUTH_VERSION} && \
-    phpize && ./configure --with-php-config=/usr/bin/php-config7 && make && make install && \
-    cd .. && rm -rf /tmp/${PHP_OAUTH_VERSION}/ && \
-    echo 'extension=oauth.so' >> ${PHP_SYSCONF_PATH}/conf.d/oauth.ini \
-    ; \
-    git clone --depth=1 -b ${PHP_REDIS_VERSION} https://github.com/phpredis/phpredis.git /tmp/phpredis && \
-    cd /tmp/phpredis && phpize &&  ./configure &&  make && make install && \
-    cd .. && rm -rf /tmp/phpredis && \
-    echo 'extension=redis.so' >> ${PHP_SYSCONF_PATH}/conf.d/redis.ini \
-    ; \
+     cp /usr/share/zoneinfo/Etc/UTC /etc/localtime; \
+     echo "UTC" | tee /etc/timezone; \
+# install PHP extensions
+    chmod a+x /app/extensions.sh; \
+    chmod a+x /app/ext/*; \
+    /app/extensions.sh ${EXTRAS}; \
     rm -rf /tmp/pear; \
-# Create application folder
-    mkdir -p /app; \
 # Creating www-data user and group
     addgroup -g 1000 -S www-data; \
 	adduser -u 1000 -D -S -h /app -s /sbin/nologin -G www-data www-data; \
-# Installing New Relic Agent
-    mkdir /opt && cd /opt; \
-    curl -LOk http://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz; \
-    gzip -dc newrelic-php5-${NEWRELIC_VERSION}-linux-musl.tar.gz | tar xf -;\
-    ./newrelic-php5-${NEWRELIC_VERSION}-linux-musl/newrelic-install install;\
-# Installing Composer
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer; \
 # Compying PHP config files
     cp -a /app/config/php.ini /etc/php7/php.ini; \
     cp -a /app/config/www.conf /etc/php7/php-fpm.d/www.conf; \
     cp -a /app/config/php-fpm.conf /etc/php7/php-fpm.conf; \
-    cp -a /app/config/xdebug.ini /etc/php7/conf.d/xdebug.ini; \
-    cp -a /app/config/newrelic.ini /etc/php7/conf.d/newrelic.ini; \
 # Cleaning
     apk del .build-deps; \
     rm -rf /var/cache/apk/*; \
@@ -192,9 +156,6 @@ RUN set -ex; \
 
 WORKDIR /app
 
-# The container shouldn't run as root, it can be a potential
-# security issue, obviously, depending the enviroment
-# but to ensure the security, we aren't going to run as root.
 USER www-data
 
 CMD ["/usr/sbin/php-fpm7"]
